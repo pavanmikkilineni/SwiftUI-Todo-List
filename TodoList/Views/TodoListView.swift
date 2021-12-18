@@ -9,20 +9,31 @@ import SwiftUI
 
 struct TodoListView: View {
     
-    let todos:[TodoModel] = [
-        TodoModel(title: "Eat", isCompleted: false),
-        TodoModel(title: "Sleep", isCompleted: true),
-        TodoModel(title: "Repeat", isCompleted: false)
-    ]
+    @EnvironmentObject var todoListViewModel:TodoListViewModel
     
     var body: some View {
-        List{
-            ForEach(todos){ todo in
-                TodoItemView(todo: todo)
+        ZStack{
+            if todoListViewModel.todos.isEmpty{
+                NoItemsView()
+                    .transition(AnyTransition.opacity.animation(.easeIn))
+            }
+            else{
+                List{
+                    ForEach(todoListViewModel.todos){ todo in
+                        TodoItemView(todo: todo)
+                            .onTapGesture(perform:{
+                                updateWithAnimation(todo: todo)
+                            })
+                    }
+                    .onDelete(perform:todoListViewModel.delete)
+                    .onMove(perform: todoListViewModel.move)
+                    
+                }
+                .listStyle(PlainListStyle())
+                
             }
         }
-        .listStyle(PlainListStyle())
-        .navigationTitle("Todo List 📝")
+        .navigationBarTitle("Todo List 📝")
         .toolbar(content: {
             ToolbarItem(placement:.navigationBarLeading){
                 EditButton()
@@ -34,6 +45,12 @@ struct TodoListView: View {
                 )
             }
         })
+    }
+    
+    func updateWithAnimation(todo:TodoModel){
+        withAnimation(.linear){
+            todoListViewModel.update(todo: todo)
+        }
     }
 }
 
