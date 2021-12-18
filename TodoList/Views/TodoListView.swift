@@ -9,16 +9,16 @@ import SwiftUI
 
 struct TodoListView: View {
     
-    let todos:[String] = [
-        "Eat",
-        "Sleep",
-        "Repeat"
+    let todos:[TodoModel] = [
+        TodoModel(title: "Eat", isCompleted: false),
+        TodoModel(title: "Sleep", isCompleted: true),
+        TodoModel(title: "Repeat", isCompleted: false)
     ]
     
     var body: some View {
         List{
-            ForEach(todos,id:\.self){ todo in
-                TodoItemView(title: todo)
+            ForEach(todos){ todo in
+                TodoItemView(todo: todo)
             }
         }
         .listStyle(PlainListStyle())
