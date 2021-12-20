@@ -11,6 +11,7 @@ struct AddTodoView: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var todoListViewModel:TodoListViewModel
+    @FocusState private var textFieldInFocus:Bool
     @State private var textFieldText:String=""
     @State private var showAlert:Bool = false
     
@@ -21,6 +22,11 @@ struct AddTodoView: View {
                     "Add todo",
                     text:$textFieldText
                 )
+                    .focused($textFieldInFocus)
+                    .submitLabel(.done)
+                    .onSubmit{
+                        saveButtonPressed()
+                    }
                     .padding()
                     .padding(.horizontal)
                     .background(Color.gray.opacity(0.1))
@@ -35,6 +41,12 @@ struct AddTodoView: View {
                     .buttonBorderShape(.roundedRectangle(radius: 10))
                     .controlSize(.large)
             }
+        }
+        .onAppear{
+            DispatchQueue.main.asyncAfter(deadline:.now() + 1){
+                self.textFieldInFocus.toggle()
+            }
+            
         }
         .padding()
         .navigationBarTitle("Add an Item 🖊")
